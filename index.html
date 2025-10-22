@@ -1,11 +1,41 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Hello Articulate</title>
+  <meta charset="UTF-8">
+  <title>Python Test in Articulate</title>
+
+  <!-- 🐍 Load PyScript (Python-in-browser) -->
+  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    py-script {
+      font-size: 1.2em;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+  </style>
 </head>
 <body>
-  <h2>Hello from my first HTML page!</h2>
-  <p>If you can read this inside Articulate, it worked 🎉</p>
+
+  <h2>✅ Python is running inside Articulate!</h2>
+
+  <p>Here’s a small Python demo:</p>
+
+  <py-script>
+    name = "Articulate"
+    print(f"Hello from Python inside {name}!")
+    for i in range(1, 6):
+        print("Counting:", i)
+  </py-script>
+
 </body>
 </html>
