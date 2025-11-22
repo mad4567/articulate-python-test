@@ -1,21 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>Brython Python Demo</title>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.11.1/brython.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.11.1/brython_stdlib.min.js"></script>
+  <meta charset="utf-8" />
+  <title>Mini Python IDE (Skulpt)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 12px; background:#f6f8fb; }
+    .container { max-width:900px; margin:0 auto; }
+    textarea { width:100%; height:320px; font-family: monospace; font-size:14px; padding:8px; box-sizing:border-box; }
+    #output { white-space:pre-wrap; background:#111; color:#e6e6e6; padding:10px; min-height:120px; margin-top:8px; border-radius:6px; }
+    .controls { margin-top:8px; display:flex; gap:8px; }
+    button { padding:8px 12px; border-radius:6px; cursor:pointer; }
+    header { margin-bottom:8px; }
+  </style>
 </head>
-<body onload="brython()">
+<body>
+  <div class="container">
+    <header>
+      <h2>Мини-IDE на Skulpt</h2>
+      <p>Напишите Python код в поле и нажмите <b>Run</b>. Работает полностью в браузере.</p>
+    </header>
 
-<h2>✅ Python is running inside Articulate!</h2>
+    <textarea id="code">print("Hello, world!")</textarea>
 
-<script type="text/python">
-name = "Articulate"
-print(f"Hello from Python inside {name}!")
-for i in range(1, 6):
-    print("Counting:", i)
-</script>
+    <div class="controls">
+      <button id="runBtn">Run ▶</button>
+      <button id="clearBtn">Clear</button>
+      <label><input type="checkbox" id="showStdLib"> включить (частичный) stdlib Skulpt</label>
+    </div>
 
+    <h3>Вывод:</h3>
+    <div id="output"></div>
+  </div>
+
+  <!-- Skulpt -->
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+
+  <script>
+    function outf(text) {
+      const out = document.getElementById("output");
+      out.textContent += text;
+    }
+    function clearOut() {
+      document.getElementById("output").textContent = "";
+    }
+    function builtinRead(x) {
+      if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+        throw "File not found: '" + x + "'";
+      return Sk.builtinFiles["files"][x];
+    }
+
+    document.getElementById("runBtn").addEventListener("click", function() {
+      clearOut();
+      const code = document.getElementById("code").value;
+      const useStd = document.getElementById("showStdLib").checked;
+
+      Sk.configure({ output:outf, read:builtinRead, yieldLimit:10000 });
+      const promise = Sk.misceval.asyncToPromise(function() {
+        return Sk.importMainWithBody("<stdin>", false, code, useStd);
+      });
+      promise.then(function(mod) {
+        // finished
+      }, function(err) {
+        outf(err.toString());
+      });
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", function() {
+      document.getElementById("code").value = "";
+      clearOut();
+    });
+  </script>
 </body>
 </html>
